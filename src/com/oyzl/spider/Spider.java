@@ -48,7 +48,7 @@ public class Spider implements Runnable {
 				
 				books.add(b);
 //				System.out.println(b);
-//				System.out.println(Thread.currentThread().getName() + " book " + name);
+				System.out.println(name);
 			}
 			
 //			System.out.println(Thread.currentThread() + " over!");

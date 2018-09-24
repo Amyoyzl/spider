@@ -16,19 +16,19 @@ public class App {
 		String url = "http://bang.dangdang.com/books/bestsellers";
 
 		List<Book> books = Collections.synchronizedList(new LinkedList<>());
-		
+
 		// 线程池
 		ExecutorService pool = Executors.newFixedThreadPool(5);
-		
-		for(int i = 1; i <= 25; i++) {
+
+		for (int i = 1; i <= 25; i++) {
 			url = "http://bang.dangdang.com/books/bestsellers/1-" + i;
 			pool.execute(new Spider(url, books));
 		}
 		// 关闭线程池
 		pool.shutdown();
-		
+
 		// 线程完成
-		if(pool.isTerminated()) {
+		if (pool.isTerminated()) {
 			write(books);
 		} else {
 			try {
@@ -43,15 +43,21 @@ public class App {
 		System.out.println(books.size());
 		// 排序
 		Collections.sort(books);
-		
+
+		// 下载书籍封面
+		ExecutorService pool = Executors.newFixedThreadPool(8);
+		for (Book b : books) {
+			pool.execute(new ImgLoader(b));
+		}
+		pool.shutdown();
+
+		// 写入Json格式的文件
 		String json = new Gson().toJson(books);
-		
 		try (FileWriter out = new FileWriter("book.json")) {
 			out.write(json);
 			System.out.println("文件已保存！");
 		} catch (Exception e) {
 		}
-		
 	}
 
 }
